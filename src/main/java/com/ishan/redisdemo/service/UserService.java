@@ -2,9 +2,12 @@ package com.ishan.redisdemo.service;
 
 
 import com.ishan.redisdemo.entity.User;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class UserService {
+public class UserService{
 
     private final Map<Long, User> fakeDb = new HashMap<>();
 
@@ -25,6 +28,7 @@ public class UserService {
         fakeDb.put(user3.getId(), user3);
     }
 
+    @CachePut(value = "users", key = "#user.id")
     public User save(User user){
         System.out.println("Save user into fake DB....");
         System.out.println("user id :"+user.getId());
@@ -32,6 +36,7 @@ public class UserService {
         return user;
     }
 
+    @Cacheable(value = "users", key="#id")
     public User getUser(Long id){
         System.out.println("Getting user from fake DB....");
         System.out.println("user id :"+id);
@@ -43,3 +48,4 @@ public class UserService {
         return userArrayList;
     }
 }
+
